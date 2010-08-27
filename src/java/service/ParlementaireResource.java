@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package service;
 
 import javax.ws.rs.Path;
@@ -26,15 +25,15 @@ import org.regardscitoyen.cpcapi.Parlementaire;
  *
  * @author waxzce
  */
-
 @Stateless
 public class ParlementaireResource {
+
     @Context
     protected UriInfo uriInfo;
     protected EntityManager em;
     protected Long id;
     protected String slug;
-  
+
     /** Creates a new instance of ParlementaireResource */
     public ParlementaireResource() {
     }
@@ -51,6 +50,10 @@ public class ParlementaireResource {
         this.em = em;
     }
 
+    public byte[] getPhoto() {
+        return this.getEntity().getPhoto();
+    }
+
     /**
      * Get method for retrieving an instance of Parlementaire identified by id in XML format.
      *
@@ -60,12 +63,9 @@ public class ParlementaireResource {
     @GET
     @Produces({"application/xml", "application/json"})
     public ParlementaireConverter get(@QueryParam("expandLevel")
-                                      @DefaultValue("1")
-    int expandLevel) {
+            @DefaultValue("1") int expandLevel) {
         return new ParlementaireConverter(getEntity(), uriInfo.getAbsolutePath(), expandLevel);
     }
-
-    
 
     /**
      * Returns an instance of Parlementaire identified by id.
@@ -75,7 +75,15 @@ public class ParlementaireResource {
      */
     protected Parlementaire getEntity() {
         try {
-            return (Parlementaire) em.createQuery("SELECT e FROM Parlementaire e where e.id = :id").setParameter("id", id).getSingleResult();
+            Parlementaire parlementaire = null;
+            if (slug != null) {
+                parlementaire = (Parlementaire) em.createQuery("SELECT e FROM Parlementaire e where e.slug = :slug").setParameter("slug", slug).getSingleResult();
+            } else {
+                parlementaire = (Parlementaire) em.createQuery("SELECT e FROM Parlementaire e where e.id = :id").setParameter("id", id).getSingleResult();
+            }
+
+
+            return parlementaire;
         } catch (NoResultException ex) {
             throw new WebApplicationException(new Throwable("Resource for " + uriInfo.getAbsolutePath() + " does not exist."), 404);
         }

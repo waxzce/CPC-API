@@ -90,6 +90,36 @@ public class ParlementairesResource {
     }
 
     /**
+     * Returns jpeg photo for parlementaire slug
+     *
+     * @return a byte stream, jpeg photo
+     */
+    @GET
+    @Path("/byslug/{slug}/photo")
+    @Produces("image/jpeg")
+    public byte[] getParlementairePhotoBySlug(@PathParam("slug")
+    String slug) {
+        parlementaireResource.setSlug(slug);
+        parlementaireResource.setEm(em);
+        return parlementaireResource.getPhoto();
+    }
+
+     /**
+     * Returns jpeg photo for parlementaire id
+     *
+     * @return a byte stream, jpeg photo
+     */
+    @GET
+    @Path("/{id}/photo")
+    @Produces("image/jpeg")
+    public byte[] getParlementairePhotoBySlug(@PathParam("id")
+    Long id) {
+        parlementaireResource.setId(id);
+        parlementaireResource.setEm(em);
+        return parlementaireResource.getPhoto();
+    }
+
+    /**
      * Returns all the entities associated with this resource.
      *
      * @return a collection of Parlementaire instances
